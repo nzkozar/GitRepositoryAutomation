@@ -1,0 +1,44 @@
+#!/bin/bash
+# Script to automatically pull fresh changes from selected git branch or origin/master
+# Arguments: <pull_branch_name> <log_filename>
+
+TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+
+# Input arguments parsing
+# <pull_branch_name>
+if [[ -n "$1" ]]
+then
+  PULL_BRANCH=$1
+else
+  PULL_BRANCH="master"
+fi
+
+# <log_filename>
+if [[ -n "$2" ]]
+then
+  LOG_FILENAME=$2
+else
+  LOG_FILENAME="check_update_branch.log"
+fi
+
+CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+
+if [ "$CURRENT_BRANCH" == "$PULL_BRANCH" ]
+then
+  git remote update
+
+  LAST_UPDATE=$(git show --no-notes --format=format:"%H" $PULL_BRANCH | head -n 1)
+  LAST_COMMIT=$(git show --no-notes --format=format:"%H" origin/$PULL_BRANCH | head -n 1)
+
+  if [ "$LAST_COMMIT" != "$LAST_UPDATE" ]
+  then
+          #Prepend new log line to log file
+          echo -e "$TIMESTAMP Updating your branch $PULL_BRANCH ($LAST_UPDATE -> $LAST_COMMIT)\n$(cat $LOG_FILENAME)" > $LOG_FILENAME
+          cat $LOG_FILENAME
+          git pull
+  else
+          echo "No updates available"
+  fi
+else
+  echo "Local branch $CURRENT_BRANCH does not match specified pull branch: $PULL_BRANCH"
+fi
