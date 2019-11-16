@@ -1,4 +1,6 @@
 #!/bin/bash
+# Author: nzkozar
+# Created: 2019-11-14
 # Script to automatically pull fresh changes from selected git branch or origin/master
 # Arguments: <pull_branch_name> <log_filename>
 
@@ -33,7 +35,7 @@ then
   if [ "$LAST_COMMIT" != "$LAST_UPDATE" ]
   then
           #Prepend new log line to log file
-          echo -e "$TIMESTAMP Updating your branch $PULL_BRANCH ($LAST_UPDATE -> $LAST_COMMIT)\n$(cat $LOG_FILENAME)" > $LOG_FILENAME
+          echo -e "$TIMESTAMP Updating local branch $PULL_BRANCH ($LAST_UPDATE -> $LAST_COMMIT)\n$(cat $LOG_FILENAME)" > $LOG_FILENAME
           cat $LOG_FILENAME
           git pull
   else
