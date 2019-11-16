@@ -4,9 +4,9 @@ The purpose of this project is to provide basic CI/CD automation for git based p
 ## Intended usage and setup
 
 ### Linux setup (Tested on Ubuntu 16.04)
-Add an /etc/crontab entry to automatically run the check_update_branch script every minute:
+Add an /etc/crontab entry to automatically run the **check_update_branch** script every minute:
 
-`* * * * * root cd <git repository directory> && ./check_update_branch <name of branch to be checked and updated>`
+`* * * * * root cd <git repository path> && ./check_update_branch <name of branch to be checked and updated>`
 
 <b>Note:</b> To allow crontab to successfully execute the script, add your github username and password (or ssh keys) to your repository, 
 so that `git pull` executes without prompting for username and password.
