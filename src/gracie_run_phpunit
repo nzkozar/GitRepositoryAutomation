@@ -1,0 +1,27 @@
+#!/bin/bash
+# Author: nzkozar
+# Created: 2019-11-14
+# Script to run phpunit tests in this repository
+# Arguments:
+
+LOG_FILE_NAME="phpunit_test_results.log"
+OUTPUT_FILE_NAME="phpunit_test_results_last.log"
+TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+NOTIFY_URL="https://api.audibook.eu/cicd/tests/notify_result?env=test"
+
+TEST_RESULTS=$("/usr/bin/php vendor/phpunit/phpunit/phpunit --configuration phpunit.xml tests")
+"-------------$TIMESTAMP-------------\n" >> $LOG_FILE_NAME
+$TEST_RESULTS >> $LOG_FILE_NAME
+
+"-------------$TIMESTAMP-------------\n" > $OUTPUT_FILE_NAME
+$TEST_RESULTS > $OUTPUT_FILE_NAME
+
+resultLastLine=$( tail -n 1 $OUTPUT_FILE_NAME )
+
+TESTS_PASSED="false"
+if [[ $resultLastLine == *"OK"* ]]; then TESTS_PASSED="true"; fi
+
+
+NOTIFY_PAYLOAD="{\"passed\":$TESTS_PASSED,\"timestamp\":\"$TIMESTAMP\"}"
+
+curl -X POST "$NOTIFY_URL" -H 'Content-Type: application/json' -d "$NOTIFY_PAYLOAD"
