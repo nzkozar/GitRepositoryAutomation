@@ -2,7 +2,7 @@
 # Author: nzkozar
 # Created: 2019-11-14
 # Script to automatically pull fresh changes from selected git branch or origin/master
-# Arguments: <pull_branch_name> <log_filename>
+# Arguments: <pull_branch_name> <log_filename> <run_on_update>
 
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
@@ -23,6 +23,14 @@ else
   LOG_FILENAME="check_update_branch.log"
 fi
 
+# <run_on_update>
+if [[ -n "$3" ]]
+then
+  RUN_ON_UPDATE_COMMAND=$3
+else
+  RUN_ON_UPDATE_COMMAND=""
+fi
+
 CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
 
 if [ "$CURRENT_BRANCH" == "$PULL_BRANCH" ]
@@ -38,6 +46,11 @@ then
           echo -e "$TIMESTAMP Updating local branch $PULL_BRANCH ($LAST_UPDATE -> $LAST_COMMIT)\n$(cat $LOG_FILENAME)" > $LOG_FILENAME
           cat $LOG_FILENAME
           git pull
+
+          if [ $RUN_ON_UPDATE_COMMAND != "" ]
+          then
+            $($RUN_ON_UPDATE_COMMAND)
+          fi
   else
           echo "No updates available"
   fi

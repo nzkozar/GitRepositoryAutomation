@@ -1,4 +1,4 @@
-# GitRepositoryAutomation
+# Grazie (Git Repository Automation)
 The purpose of this project is to provide basic CI/CD automation for git based projects.
 
 ## Intended usage and setup
